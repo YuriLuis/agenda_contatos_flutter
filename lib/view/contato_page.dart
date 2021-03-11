@@ -67,7 +67,6 @@ class _ContatoPageState extends State<ContatoPage> {
             children: [
               GestureDetector(
                 child: Container(
-
                   width: 150.0,
                   height: 150.0,
                   decoration: BoxDecoration(
@@ -80,6 +79,7 @@ class _ContatoPageState extends State<ContatoPage> {
                   ),
                 ),
                 onTap: () {
+                  // ignore: deprecated_member_use
                   ImagePicker.pickImage(source: ImageSource.camera)
                       .then((file) {
                     if (file == null) return;
