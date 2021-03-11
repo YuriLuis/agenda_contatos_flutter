@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:agenda_contatos_flutter/helper/contato_helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ContatoPage extends StatefulWidget {
   final Contact contact;
@@ -21,6 +22,7 @@ class _ContatoPageState extends State<ContatoPage> {
   final _nomeController = TextEditingController();
   final _emailController = TextEditingController();
   final _telefoneController = TextEditingController();
+  final picker = ImagePicker();
 
   @override
   void initState() {
@@ -65,17 +67,26 @@ class _ContatoPageState extends State<ContatoPage> {
             children: [
               GestureDetector(
                 child: Container(
-                  width: 140.0,
-                  height: 140.0,
+                  width: 150.0,
+                  height: 150.0,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     image: DecorationImage(
                         image: _contatoParaEditado.img != null
-                            ? AssetImage(
-                            "images/usuario_padrao.png") /*FileImage(File(_contatoParaEditado.img))*/
-                            : AssetImage("images/usuario_padrao.png")),
+                            ? FileImage(File(_contatoParaEditado.img))
+                            : AssetImage("images/usuario_padrao.png"),
+                        fit: BoxFit.cover),
                   ),
                 ),
+                onTap: () {
+                  ImagePicker.pickImage(source: ImageSource.camera)
+                      .then((file) {
+                    if (file == null) return;
+                    setState(() {
+                      _contatoParaEditado.img = file.path;
+                    });
+                  });
+                },
               ),
               TextFormField(
                 decoration: InputDecoration(labelText: "Nome"),
@@ -112,13 +123,13 @@ class _ContatoPageState extends State<ContatoPage> {
       ),
       // ignore: missing_return
       onWillPop: () => _requestPop(),
-
     );
   }
 
   Future<bool> _requestPop() {
     if (_userEdit) {
-      showDialog(context: context,
+      showDialog(
+          context: context,
           builder: (context) {
             return AlertDialog(
               title: Text("Descartar Alterações?"),
@@ -139,12 +150,10 @@ class _ContatoPageState extends State<ContatoPage> {
                 ),
               ],
             );
-          }
-      );
+          });
       return Future.value(false);
     } else {
       return Future.value(true);
     }
   }
 }
-

@@ -61,9 +61,9 @@ class _HomePageState extends State<HomePage> {
                   shape: BoxShape.circle,
                   image: DecorationImage(
                       image: listContacts[index].img != null
-                          ? AssetImage(
-                          "images/usuario_padrao.png") /*FileImage(File(listContacts[index].img))*/
-                          : AssetImage("images/usuario_padrao.png")),
+                          ? FileImage(File(listContacts[index].img))
+                          : AssetImage("images/usuario_padrao.png"),
+                  fit: BoxFit.cover),
                 ),
               ),
               Padding(
