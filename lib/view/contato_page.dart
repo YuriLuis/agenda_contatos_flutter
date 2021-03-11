@@ -5,7 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ContatoPage extends StatefulWidget {
-
   final Contact contact;
 
   ContatoPage({this.contact});
@@ -15,7 +14,6 @@ class ContatoPage extends StatefulWidget {
 }
 
 class _ContatoPageState extends State<ContatoPage> {
-
   Contact _contatoParaEditado;
   bool _userEdit = false;
   final _focusName = FocusNode();
@@ -40,29 +38,32 @@ class _ContatoPageState extends State<ContatoPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.black54,
-        title: Text(_contatoParaEditado.name ?? "Novo Contato"),
-        centerTitle: true,
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          if(_contatoParaEditado.name !=null &&  _contatoParaEditado.name.isNotEmpty){
-            Navigator.pop(context, _contatoParaEditado); //finaliza essa tela e volta para tela anterior!
-          }else{
-            FocusScope.of(context).requestFocus(_focusName);
-          }
-        },
-        child: Icon(Icons.save),
-        backgroundColor: Colors.black54,
-      ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(10.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            GestureDetector(
+    return WillPopScope(
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.black54,
+          title: Text(_contatoParaEditado.name ?? "Novo Contato"),
+          centerTitle: true,
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            if (_contatoParaEditado.name != null &&
+                _contatoParaEditado.name.isNotEmpty) {
+              Navigator.pop(context,
+                  _contatoParaEditado); //finaliza essa tela e volta para tela anterior!
+            } else {
+              FocusScope.of(context).requestFocus(_focusName);
+            }
+          },
+          child: Icon(Icons.save),
+          backgroundColor: Colors.black54,
+        ),
+        body: SingleChildScrollView(
+          padding: EdgeInsets.all(10.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              GestureDetector(
                 child: Container(
                   width: 140.0,
                   height: 140.0,
@@ -70,49 +71,80 @@ class _ContatoPageState extends State<ContatoPage> {
                     shape: BoxShape.circle,
                     image: DecorationImage(
                         image: _contatoParaEditado.img != null
-                            ? AssetImage("images/usuario_padrao.png") /*FileImage(File(_contatoParaEditado.img))*/
+                            ? AssetImage(
+                            "images/usuario_padrao.png") /*FileImage(File(_contatoParaEditado.img))*/
                             : AssetImage("images/usuario_padrao.png")),
                   ),
                 ),
-            ),
-            TextFormField(
-              decoration: InputDecoration(
-                labelText: "Nome"
               ),
-              onChanged: (text){
-                _userEdit = true;
-                setState(() {
-                  _contatoParaEditado.name = text;
-                });
-              },
-              focusNode: _focusName,
-              controller: _nomeController,
-            ),
-            TextFormField(
-              decoration: InputDecoration(
-                  labelText: "Email"
+              TextFormField(
+                decoration: InputDecoration(labelText: "Nome"),
+                onChanged: (text) {
+                  _userEdit = true;
+                  setState(() {
+                    _contatoParaEditado.name = text;
+                  });
+                },
+                focusNode: _focusName,
+                controller: _nomeController,
               ),
-              onChanged: (text){
-                _userEdit = true;
-                _contatoParaEditado.email = text;
-              },
-              controller: _emailController,
-              keyboardType: TextInputType.emailAddress,
-            ),
-            TextFormField(
-              decoration: InputDecoration(
-                  labelText: "Telefone"
+              TextFormField(
+                decoration: InputDecoration(labelText: "Email"),
+                onChanged: (text) {
+                  _userEdit = true;
+                  _contatoParaEditado.email = text;
+                },
+                controller: _emailController,
+                keyboardType: TextInputType.emailAddress,
               ),
-              onChanged: (text){
-                _userEdit = true;
-                _contatoParaEditado.phone = text;
-              },
-              keyboardType: TextInputType.phone,
-              controller: _telefoneController,
-            ),
-          ],
+              TextFormField(
+                decoration: InputDecoration(labelText: "Telefone"),
+                onChanged: (text) {
+                  _userEdit = true;
+                  _contatoParaEditado.phone = text;
+                },
+                keyboardType: TextInputType.phone,
+                controller: _telefoneController,
+              ),
+            ],
+          ),
         ),
       ),
+      // ignore: missing_return
+      onWillPop: () => _requestPop(),
+
     );
   }
+
+  Future<bool> _requestPop() {
+    if (_userEdit) {
+      showDialog(context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text("Descartar Alterações?"),
+              content: Text("Se sair as alterações serão perdidas."),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text("Cancelar"),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                FlatButton(
+                  child: Text("Sim"),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            );
+          }
+      );
+      return Future.value(false);
+    } else {
+      return Future.value(true);
+    }
+  }
 }
+
