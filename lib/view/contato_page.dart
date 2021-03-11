@@ -67,6 +67,7 @@ class _ContatoPageState extends State<ContatoPage> {
             children: [
               GestureDetector(
                 child: Container(
+
                   width: 150.0,
                   height: 150.0,
                   decoration: BoxDecoration(
