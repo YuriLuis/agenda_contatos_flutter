@@ -16,8 +16,9 @@ class ContatoPage extends StatefulWidget {
 
 class _ContatoPageState extends State<ContatoPage> {
 
-  Contact _contatoParaEdit;
+  Contact _contatoParaEditado;
   bool _userEdit = false;
+  final _focusName = FocusNode();
 
   final _nomeController = TextEditingController();
   final _emailController = TextEditingController();
@@ -28,12 +29,12 @@ class _ContatoPageState extends State<ContatoPage> {
     // TODO: implement initState
     super.initState();
     if (widget.contact == null) {
-      _contatoParaEdit = Contact();
+      _contatoParaEditado = Contact();
     } else {
-      _contatoParaEdit = Contact.fromMap(widget.contact.toMap());
-      _nomeController.text = _contatoParaEdit.name;
-      _emailController.text = _contatoParaEdit.email;
-      _telefoneController.text = _contatoParaEdit.phone;
+      _contatoParaEditado = Contact.fromMap(widget.contact.toMap());
+      _nomeController.text = _contatoParaEditado.name;
+      _emailController.text = _contatoParaEditado.email;
+      _telefoneController.text = _contatoParaEditado.phone;
     }
   }
 
@@ -42,11 +43,17 @@ class _ContatoPageState extends State<ContatoPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black54,
-        title: Text(_contatoParaEdit.name ?? "Novo Contato"),
+        title: Text(_contatoParaEditado.name ?? "Novo Contato"),
         centerTitle: true,
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          if(_contatoParaEditado.name !=null &&  _contatoParaEditado.name.isNotEmpty){
+            Navigator.pop(context, _contatoParaEditado); //finaliza essa tela e volta para tela anterior!
+          }else{
+            FocusScope.of(context).requestFocus(_focusName);
+          }
+        },
         child: Icon(Icons.save),
         backgroundColor: Colors.black54,
       ),
@@ -62,8 +69,8 @@ class _ContatoPageState extends State<ContatoPage> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     image: DecorationImage(
-                        image: _contatoParaEdit.img != null
-                            ? FileImage(File(_contatoParaEdit.img))
+                        image: _contatoParaEditado.img != null
+                            ? AssetImage("images/usuario_padrao.png") /*FileImage(File(_contatoParaEditado.img))*/
                             : AssetImage("images/usuario_padrao.png")),
                   ),
                 ),
@@ -75,9 +82,10 @@ class _ContatoPageState extends State<ContatoPage> {
               onChanged: (text){
                 _userEdit = true;
                 setState(() {
-                  _contatoParaEdit.name = text;
+                  _contatoParaEditado.name = text;
                 });
               },
+              focusNode: _focusName,
               controller: _nomeController,
             ),
             TextFormField(
@@ -86,7 +94,7 @@ class _ContatoPageState extends State<ContatoPage> {
               ),
               onChanged: (text){
                 _userEdit = true;
-                _contatoParaEdit.email = text;
+                _contatoParaEditado.email = text;
               },
               controller: _emailController,
               keyboardType: TextInputType.emailAddress,
@@ -97,7 +105,7 @@ class _ContatoPageState extends State<ContatoPage> {
               ),
               onChanged: (text){
                 _userEdit = true;
-                _contatoParaEdit.phone = text;
+                _contatoParaEditado.phone = text;
               },
               keyboardType: TextInputType.phone,
               controller: _telefoneController,
